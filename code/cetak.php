@@ -20,6 +20,9 @@
             <th class="border-bottom-0">
                 <h6 class="fw-semibold mb-0">Status Peminjaman</h6>
             </th>
+            <th class="border-bottom-0">
+                <h6 class="fw-semibold mb-0">Keterangan</h6>
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -45,6 +48,9 @@
             </td>
             <td class="border-bottom-0">
                 <h6 class="fw-semibold mb-1"><?php echo $data['StatusPeminjaman'];?></h6>                        
+            </td>
+            <td class="border-bottom-0">
+                <h6 class="fw-semibold mb-1"><?php echo $data['Keterangan'];?></h6>                        
             </td>
         </tr>
         <?php

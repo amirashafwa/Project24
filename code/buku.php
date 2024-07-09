@@ -5,18 +5,27 @@
         <li class="breadcrumb-item active" aria-current="page">Buku</li>
     </ol>
 </nav>
+<?php
+if (isset($_SESSION['user']['Level'])) {
+?>
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-secondary mb-3" data-bs-toggle="modal" data-bs-target="#ModalTambah">
     <i class="ti ti-plus"></i>Tambah Data
 </button>
+<?php
+}
+?>
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
             <table class="table text-nowrap mb-0 align-middle">
                 <thead class="text-dark fs-4">
-                    <tr>
-                        <th class="border-bottom-0" width="200">
+                    <tr class="text-center">
+                        <th class="border-bottom-0">
                             <h6 class="fw-semibold mb-0">No</h6>
+                        </th>
+                        <th class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0">Kategori</h6>
                         </th>
                         <th class="border-bottom-0">
                             <h6 class="fw-semibold mb-0">Judul</h6>
@@ -31,18 +40,28 @@
                             <h6 class="fw-semibold mb-0">Tahun Terbit</h6>
                         </th>
                         <th class="border-bottom-0">
+                            <h6 class="fw-semibold mb-0">Stok Buku</h6>
+                        </th>
+                        <th class="border-bottom-0">
                             <h6 class="fw-semibold mb-0">Aksi</h6>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    $i = 1;
-                    $query = mysqli_query($koneksi, "SELECT*FROM buku");
-                    while ($data = mysqli_fetch_array($query)) {
-                    ?>
+                <?php
+                $i = 1;
+                $query = mysqli_query($koneksi, "SELECT buku.*, kategoribuku.NamaKategori 
+                    FROM buku 
+                    LEFT JOIN kategoribuku_relasi ON buku.BukuID = kategoribuku_relasi.BukuID 
+                    LEFT JOIN kategoribuku ON kategoribuku_relasi.KategoriID = kategoribuku.KategoriID");
+
+                while ($data = mysqli_fetch_array($query)) {
+                ?>
                     <tr>
-                        <td class="border-bottom-0"><h6 class="fw-semibold mb-0"><?php echo $i++; ?></h6></td>
+                        <td class="border-bottom-0 text-center"><h6 class="fw-semibold mb-0"><?php echo $i++; ?></h6></td>
+                        <td class="border-bottom-0">
+                            <h6 class="fw-semibold mb-1"><?php echo $data['NamaKategori'];?></h6>                        
+                        </td>
                         <td class="border-bottom-0">
                             <h6 class="fw-semibold mb-1"><?php echo $data['Judul'];?></h6>                        
                         </td>
@@ -52,12 +71,33 @@
                         <td class="border-bottom-0">
                             <h6 class="fw-semibold mb-1"><?php echo $data['Penerbit'];?></h6>                        
                         </td>
-                        <td class="border-bottom-0">
+                        <td class="border-bottom-0 text-center">
                             <h6 class="fw-semibold mb-1"><?php echo $data['TahunTerbit'];?></h6>                        
                         </td>
+                        <td class="border-bottom-0 text-center">
+                            <h6 class="fw-semibold mb-1"><?php echo $data['StokBuku'];?></h6>                        
+                        </td>
                         <td class="border-bottom-0">
+                            <?php
+                            if (isset($_SESSION['user']['UserID'])) {
+                                // Fetch user's bookmarks
+                                $userID = $_SESSION['user']['UserID'];
+                                $userBookmarks = [];
+                                $queryBookmarks = mysqli_query($koneksi, "SELECT BukuID FROM koleksipribadi WHERE UserID = $userID");
+                                while ($row = mysqli_fetch_assoc($queryBookmarks)) {
+                                    $userBookmarks[] = $row['BukuID'];
+                                }
+                                ?>
+                                <i class="bookmark-icon fa-regular fa-bookmark <?php echo (in_array($data['BukuID'], $userBookmarks) ? 'fa-solid' : ''); ?>" data-buku-id="<?php echo $data['BukuID']; ?>" data-user-id="<?php echo $userID; ?>"></i>
+                            <?php
+                            }
+                            if (isset($_SESSION['user']['Level'])) {
+                            ?>
                             <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#ModalUbah<?php echo $data['BukuID']; ?>"><i class="ti ti-edit"></i></button>
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#ModalHapus<?php echo $data['BukuID']; ?>"><i class="ti ti-trash"></i></button>                        
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#ModalHapus<?php echo $data['BukuID']; ?>"><i class="ti ti-trash"></i></button>
+                            <?php
+                            }
+                            ?>                  
                         </td>
                     </tr>
                     <?php
@@ -84,20 +124,37 @@
             <form method="post" action="aksi-crud.php">
                 <div class="modal-body">
                     <div class="mb-3">
+                        <label for="judul" class="form-label">Kategori</label>
+                        <select class="form-select" aria-label="Default select example" name="kategori" id="judul">
+                            <?php
+                            $k = mysqli_query($koneksi, "SELECT*FROM kategoribuku");
+                            while ($kat = mysqli_fetch_array($k)) {
+                                ?>
+                            <option value="<?php echo $kat['KategoriID']; ?>"><?php echo $kat['NamaKategori']; ?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label for="judul" class="form-label">Judul</label>
-                        <input type="text" class="form-control" id="judul" placeholder="Masukkan Judul Buku" name="judul">
+                        <input autocomplete="off" type="text" class="form-control" id="judul" placeholder="Masukkan Judul Buku" name="judul">
                     </div>
                     <div class="mb-3">
                         <label for="penulis" class="form-label">Penulis</label>
-                        <input type="text" class="form-control" id="penulis" placeholder="Masukkan Nama Penulis" name="penulis">
+                        <input autocomplete="off" type="text" class="form-control" id="penulis" placeholder="Masukkan Nama Penulis" name="penulis">
                     </div>
                     <div class="mb-3">
                         <label for="penerbit" class="form-label">Penerbit</label>
-                        <input type="text" class="form-control" id="penerbit" placeholder="Masukkan Nama Penerbit" name="penerbit">
+                        <input autocomplete="off" type="text" class="form-control" id="penerbit" placeholder="Masukkan Nama Penerbit" name="penerbit">
                     </div>
                     <div class="mb-3">
                         <label for="tahunterbit" class="form-label">Tahun Terbit</label>
-                        <input type="text" class="form-control" id="tahunterbit" placeholder="Masukkan Tahun Terbit" name="tahunterbit">
+                        <input autocomplete="off" type="number" class="form-control" id="tahunterbit" placeholder="Masukkan Tahun Terbit" name="tahunterbit">
+                    </div>
+                    <div class="mb-3">
+                        <label for="stok" class="form-label">Stok</label>
+                        <input autocomplete="off" type="number" class="form-control" id="stok" placeholder="Masukkan Stok Buku" name="stok">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -109,9 +166,12 @@
     </div>
 </div>
 
+
+
+
 <!-- Modal Ubah -->
 <?php
-$query = mysqli_query($koneksi, "SELECT * FROM buku");
+$query = mysqli_query($koneksi, "SELECT*FROM buku");
 while ($data = mysqli_fetch_array($query)) {
 ?>
 <div class="modal fade" id="ModalUbah<?php echo $data['BukuID']; ?>" tabindex="-1" aria-labelledby="ModalUbahLabel" aria-hidden="true">
@@ -125,25 +185,51 @@ while ($data = mysqli_fetch_array($query)) {
                 <input type="hidden" name="bukuID" value="<?php echo $data['BukuID']; ?>">
                 <div class="modal-body">
                     <div class="mb-3">
+                        <label for="kategori" class="form-label">Kategori</label>
+                        <select class="form-select" aria-label="Default select example" name="kategori" id="kategori">
+                        <?php
+                        $categories_query = mysqli_query($koneksi, "SELECT * FROM kategoribuku_relasi LEFT JOIN kategoribuku ON kategoribuku_relasi.KategoriID = kategoribuku.KategoriID LEFT JOIN buku ON kategoribuku_relasi.BukuID = buku.BukuID WHERE buku.BukuID = {$data['BukuID']}");
+                        while ($category = mysqli_fetch_array($categories_query)) {
+                            $selected = ($category['KategoriID'] == $data['KategoriID']) ? 'selected' : '';
+                            ?>
+                            <option value="<?php echo $category['KategoriID']; ?>" <?php echo $selected; ?>><?php echo $category['NamaKategori']; ?></option>
+                        <?php
+                        }
+
+                        // Fetch and display all other categories not related to the current book
+                        $all_categories_query = mysqli_query($koneksi, "SELECT * FROM kategoribuku WHERE KategoriID NOT IN (SELECT KategoriID FROM kategoribuku_relasi WHERE BukuID = {$data['BukuID']})");
+                        while ($other_category = mysqli_fetch_array($all_categories_query)) {
+                            ?>
+                            <option value="<?php echo $other_category['KategoriID']; ?>"><?php echo $other_category['NamaKategori']; ?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                    </div>
+                    <div class="mb-3">
                         <label for="judul" class="form-label">Judul</label>
-                        <input type="text" class="form-control" id="judul" placeholder="Masukkan Judul Buku" name="judul" value="<?php echo $data['Judul']; ?>">
+                        <input autocomplete="off" type="text" class="form-control" id="judul" placeholder="Masukkan Judul Buku" name="judul" value="<?php echo $data['Judul']; ?>">
                     </div>
                     <div class="mb-3">
                         <label for="penulis" class="form-label">Penulis</label>
-                        <input type="text" class="form-control" id="penulis" placeholder="Masukkan Nama Penulis" name="penulis" value="<?php echo $data['Penulis']; ?>">
+                        <input autocomplete="off" type="text" class="form-control" id="penulis" placeholder="Masukkan Nama Penulis" name="penulis" value="<?php echo $data['Penulis']; ?>">
                     </div>
                     <div class="mb-3">
                         <label for="penerbit" class="form-label">Penerbit</label>
-                        <input type="text" class="form-control" id="penerbit" placeholder="Masukkan Nama Penerbit" name="penerbit" value="<?php echo $data['Penerbit']; ?>">
+                        <input autocomplete="off" type="text" class="form-control" id="penerbit" placeholder="Masukkan Nama Penerbit" name="penerbit" value="<?php echo $data['Penerbit']; ?>">
                     </div>
                     <div class="mb-3">
                         <label for="tahunterbit" class="form-label">Tahun Terbit</label>
-                        <input type="text" class="form-control" id="tahunterbit" placeholder="Masukkan Tahun Terbit" name="tahunterbit" value="<?php echo $data['TahunTerbit']; ?>">
+                        <input autocomplete="off" type="number" class="form-control" id="tahunterbit" placeholder="Masukkan Tahun Terbit" name="tahunterbit" value="<?php echo $data['TahunTerbit']; ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="stok" class="form-label">Stok Buku</label>
+                        <input autocomplete="off" type="number" class="form-control" id="stok" placeholder="Masukkan Stok Buku" name="stok" value="<?php echo $data['StokBuku']; ?>">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" name="bukuubah">Save</button>
+                    <button type="submit" class="btn btn-primary" name="bukuubah">Update Buku</button>
                 </div>
             </form>
         </div>
@@ -183,3 +269,57 @@ while ($data = mysqli_fetch_array($query)) {
 <?php
 }
 ?>
+
+
+
+<!-- JavaScript to handle the bookmarking -->
+<script>
+$(document).ready(function() {
+    // Handle click event on bookmark icon
+    $('.bookmark-icon').click(function() {
+        var bukuID = $(this).data('buku-id');
+        var userID = $(this).data('user-id');
+        var isBookmarked = $(this).hasClass('fa-solid');
+
+        if (isBookmarked) {
+            removeFromFavorites(bukuID, userID);
+        } else {
+            addToFavorites(bukuID, userID);
+        }
+    });
+
+    function addToFavorites(bukuID, userID) {
+        $.ajax({
+            url: 'aksi-crud.php',
+            type: 'POST',
+            data: {
+                bukuID: bukuID,
+                userID: userID,
+                action: 'add'
+            },
+            success: function(response) {
+                alert('Bookmark added successfully!');
+                // Change bookmark icon color to red
+                $('.bookmark-icon[data-buku-id="' + bukuID + '"]').addClass('fa-solid');
+            }
+        });
+    }
+
+    function removeFromFavorites(bukuID, userID) {
+        $.ajax({
+            url: 'aksi-crud.php',
+            type: 'POST',
+            data: {
+                bukuID: bukuID,
+                userID: userID,
+                action: 'remove'
+            },
+            success: function(response) {
+                alert('Bookmark removed successfully!');
+                // Change bookmark icon color to white
+                $('.bookmark-icon[data-buku-id="' + bukuID + '"]').addClass('fa-regular').removeClass('fa-solid');
+            }
+        });
+    }
+});
+</script>

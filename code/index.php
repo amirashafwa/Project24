@@ -9,15 +9,23 @@ if (!isset($_SESSION['user'])) {
 <html lang="en">
 
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Perpustakaan Digital</title>
-<link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
-<link rel="stylesheet" href="../assets/css/styles.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Perpustakaan Digital</title>
+    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+    <link rel="stylesheet" href="../assets/css/styles.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .bookmark-icon {
+            background: black;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+    </style>
 </head>
-
 <body>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 <!--  Body Wrapper -->
 <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
@@ -48,14 +56,14 @@ if (!isset($_SESSION['user'])) {
                         <span class="hide-menu">Dashboard</span>
                     </a>
                 </li>
-                <li class="nav-small-cap">
-                <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                <span class="hide-menu">NAVIGASI</span>
-                </li>
                 <?php
                 if (isset($_SESSION['user']['Level'])) {
                     if ($_SESSION['user']['Level'] == 'Administrator') {
                 ?>
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">USER</span>
+                </li>
                 <li class="sidebar-item">
                 <a class="sidebar-link" href="?page=petugas" aria-expanded="false">
                     <span>
@@ -69,11 +77,19 @@ if (!isset($_SESSION['user'])) {
                     <span>
                     <i class="ti ti-users"></i>
                     </span>
-                    <span class="hide-menu">User</span>
+                    <span class="hide-menu">Peminjam</span>
                 </a>
                 </li>
                 <?php
+                    }
                 }
+                ?>
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">BUKU</span>
+                </li>
+                <?php
+                if (isset($_SESSION['user']['Level'])) {
                 ?>
                 <li class="sidebar-item">
                 <a class="sidebar-link" href="?page=kategori" aria-expanded="false">
@@ -83,45 +99,53 @@ if (!isset($_SESSION['user'])) {
                     <span class="hide-menu">Kategori</span>
                 </a>
                 </li>
-                <li class="sidebar-item">
-                <a class="sidebar-link" href="?page=buku" aria-expanded="false">
-                    <span>
-                    <i class="ti ti-book"></i>
-                    </span>
-                    <span class="hide-menu">Buku</span>
-                </a>
-                </li>
                 <?php
-                } else {
+                    }
                 ?>
                 <li class="sidebar-item">
-                <a class="sidebar-link" href="?page=peminjaman" aria-expanded="false">
-                    <span>
-                    <i class="ti ti-books"></i>
-                    </span>
-                    <span class="hide-menu">Peminjaman</span>
-                </a>
+                    <a class="sidebar-link" href="?page=buku" aria-expanded="false">
+                        <span>
+                        <i class="ti ti-book"></i>
+                        </span>
+                        <span class="hide-menu">Buku</span>
+                    </a>
                 </li>
-                <?php
-                }
-                ?>
                 <li class="sidebar-item">
-                <a class="sidebar-link" href="?page=ulasan" aria-expanded="false">
-                    <span>
-                    <i class="ti ti-star"></i>
-                    </span>
-                    <span class="hide-menu">Ulasan</span>
-                </a>
+                    <a class="sidebar-link" href="?page=ulasan" aria-expanded="false">
+                        <span>
+                        <i class="ti ti-star"></i>
+                        </span>
+                        <span class="hide-menu">Ulasan</span>
+                    </a>
                 </li>
                 <?php
                 if (isset($_SESSION['user']['Level'])) {
                 ?>
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">LAPORAN</span>
+                </li>
                 <li class="sidebar-item">
                 <a class="sidebar-link" href="?page=laporan" aria-expanded="false">
                     <span>
                     <i class="ti ti-report"></i>
                     </span>
                     <span class="hide-menu">Laporan Peminjaman</span>
+                </a>
+                </li>
+                <?php
+                } else {
+                ?>
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">PEMINJAMAN</span>
+                </li>
+                <li class="sidebar-item">
+                <a class="sidebar-link" href="?page=peminjaman" aria-expanded="false">
+                    <span>
+                    <i class="ti ti-books"></i>
+                    </span>
+                    <span class="hide-menu">Peminjaman</span>
                 </a>
                 </li>
                 <?php
@@ -225,5 +249,4 @@ if (!isset($_SESSION['user'])) {
 <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
 <script src="../assets/js/dashboard.js"></script>
 </body>
-
 </html>

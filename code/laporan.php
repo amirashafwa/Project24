@@ -13,8 +13,8 @@
         <div class="table-responsive">
             <table class="table text-nowrap mb-0 align-middle">
                 <thead class="text-dark fs-4">
-                    <tr>
-                        <th class="border-bottom-0" width="100">
+                    <tr class="text-center">
+                        <th class="border-bottom-0" width="1">
                             <h6 class="fw-semibold mb-0">No</h6>
                         </th>
                         <th class="border-bottom-0">
@@ -41,21 +41,22 @@
                     while ($data = mysqli_fetch_array($query)) {
                     ?>
                     <tr>
-                        <td class="border-bottom-0"><h6 class="fw-semibold mb-0"><?php echo $i++; ?></h6></td>
+                        <td class="border-bottom-0 text-center"><h6 class="fw-semibold mb-0"><?php echo $i++; ?></h6></td>
                         <td class="border-bottom-0">
                             <h6 class="fw-semibold mb-1"><?php echo $data['NamaLengkap'];?></h6>                        
                         </td>
                         <td class="border-bottom-0">
                             <h6 class="fw-semibold mb-1"><?php echo $data['Judul'];?></h6>                        
                         </td>
-                        <td class="border-bottom-0">
+                        <td class="border-bottom-0 text-center">
                             <h6 class="fw-semibold mb-1"><?php echo $data['TanggalPeminjaman'];?></h6>                        
                         </td>
-                        <td class="border-bottom-0">
+                        <td class="border-bottom-0 text-center">
                             <h6 class="fw-semibold mb-1"><?php echo $data['TanggalPengembalian'];?></h6>                        
                         </td>
-                        <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-1"><?php echo $data['StatusPeminjaman'];?></h6>                        
+                        <td class="border-bottom-0 text-center">
+                            <h6 class="fw-semibold mb-1"><?php echo $data['StatusPeminjaman'];?></h6>
+                            <span class="fw-normal <?php if ($data['Keterangan'] == 'Terlambat') echo 'text-danger'; elseif ($data['Keterangan'] == 'Tepat Waktu') echo 'text-primary'; ?>"><?php echo $data['Keterangan'];?></span>
                         </td>
                     </tr>
                     <?php
@@ -66,94 +67,3 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-<!-- Modal Tambah -->
-<div class="modal fade" id="ModalTambah" tabindex="-1" aria-labelledby="ModalTambahLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="ModalTambahLabel">Tambah data kategori</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" action="aksi-crud.php">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="namakategori" class="form-label">Nama Kategori</label>
-                        <input type="text" class="form-control" id="namakategori" placeholder="Masukkan Nama Kategori" name="namakategori">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" name="kategorisimpan">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Ubah -->
-<?php
-$query = mysqli_query($koneksi, "SELECT * FROM kategoribuku");
-while ($data = mysqli_fetch_array($query)) {
-?>
-<div class="modal fade" id="ModalUbah<?php echo $data['KategoriID']; ?>" tabindex="-1" aria-labelledby="ModalUbahLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="ModalUbahLabel">Ubah data kategori</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" action="aksi-crud.php">
-                <input type="hidden" name="kategoriID" value="<?php echo $data['KategoriID']; ?>">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="namakategori" class="form-label">Nama Kategori</label>
-                        <input type="text" class="form-control" id="namakategori" placeholder="Masukkan Nama Kategori" name="namakategori" value="<?php echo $data['NamaKategori']; ?>">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" name="kategoriubah">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<?php
-}
-?>
-
-
-<!-- Modal Hapus -->
-<?php
-$query = mysqli_query($koneksi, "SELECT * FROM kategoribuku");
-while ($data = mysqli_fetch_array($query)) {
-?>
-<div class="modal fade" id="ModalHapus<?php echo $data['KategoriID']; ?>" tabindex="-1" aria-labelledby="ModalHapusLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="ModalHapusLabel">Konfirmasi Hapus Data</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="post" action="aksi-crud.php">
-                <input type="hidden" name="kategoriID" value="<?php echo $data['KategoriID']; ?>">
-                <div class="modal-body">
-                    <h5 class="card-title fw-semibold mb-4">Apakah anda yakin menghapus data ini?</h5>
-                    <p class="mb-0 text-danger">Nama Kategori : <?php echo $data['NamaKategori'];?></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancle</button>
-                    <button type="submit" class="btn btn-danger" name="kategorihapus">Ya, Hapus</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<?php
-}
-?>

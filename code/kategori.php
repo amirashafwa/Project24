@@ -68,7 +68,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="namakategori" class="form-label">Nama Kategori</label>
-                        <input type="text" class="form-control" id="namakategori" placeholder="Masukkan Nama Kategori" name="namakategori">
+                        <input autocomplete="off" type="text" class="form-control" id="namakategori" placeholder="Masukkan Nama Kategori" name="namakategori">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -97,7 +97,7 @@ while ($data = mysqli_fetch_array($query)) {
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="namakategori" class="form-label">Nama Kategori</label>
-                        <input type="text" class="form-control" id="namakategori" placeholder="Masukkan Nama Kategori" name="namakategori" value="<?php echo $data['NamaKategori']; ?>">
+                        <input autocomplete="off" type="text" class="form-control" id="namakategori" placeholder="Masukkan Nama Kategori" name="namakategori" value="<?php echo $data['NamaKategori']; ?>">
                     </div>
                 </div>
                 <div class="modal-footer">

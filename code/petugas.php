@@ -79,15 +79,15 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="nama" class="form-label">Nama</label>
-                        <input type="text" class="form-control" id="nama" placeholder="Masukkan Nama" name="nama">
+                        <input autocomplete="off" type="text" class="form-control" id="nama" placeholder="Masukkan Nama" name="nama">
                     </div>
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" placeholder="Masukkan Username" name="username">
+                        <input autocomplete="off" type="text" class="form-control" id="username" placeholder="Masukkan Username" name="username">
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Masukkan Password" name="password">
+                        <input autocomplete="off" type="password" class="form-control" id="password" placeholder="Masukkan Password" name="password">
                     </div>
                     <div class="mb-3">
                         <label for="level" class="form-label">Level</label>
@@ -124,15 +124,15 @@ while ($data = mysqli_fetch_array($query)) {
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="nama" class="form-label">Nama</label>
-                        <input type="text" class="form-control" id="nama" placeholder="Masukkan Nama" name="nama" value="<?php echo $data['Nama'];?>">
+                        <input autocomplete="off" type="text" class="form-control" id="nama" placeholder="Masukkan Nama" name="nama" value="<?php echo $data['Nama'];?>">
                     </div>
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" placeholder="Masukkan Username" name="username" value="<?php echo $data['Username'];?>">
+                        <input autocomplete="off" type="text" class="form-control" id="username" placeholder="Masukkan Username" name="username" value="<?php echo $data['Username'];?>">
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Masukkan Password" name="password">
+                        <input autocomplete="off" type="password" class="form-control" id="password" placeholder="Masukkan Password" name="password">
                         <small>*Jika tidak ingin diubah, kosongkan saja</small>
                     </div>
                     <div class="mb-3">

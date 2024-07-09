@@ -6,7 +6,7 @@
     </ol>
 </nav>
 <?php
-if (!isset($_SESSION['user']['Level'])) {
+if (isset($_SESSION['user']['UserID'])) {
 ?>
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-secondary mb-3" data-bs-toggle="modal" data-bs-target="#ModalTambah">
@@ -20,7 +20,7 @@ if (!isset($_SESSION['user']['Level'])) {
         <div class="table-responsive">
             <table class="table text-nowrap mb-0 align-middle">
                 <thead class="text-dark fs-4">
-                    <tr>
+                    <tr class="text-center">
                         <th class="border-bottom-0" width="100">
                             <h6 class="fw-semibold mb-0">No</h6>
                         </th>
@@ -36,9 +36,15 @@ if (!isset($_SESSION['user']['Level'])) {
                         <th class="border-bottom-0">
                             <h6 class="fw-semibold mb-0">Rating</h6>
                         </th>
+                        <?php
+                        if (isset($_SESSION['user']['UserID'])) {
+                        ?>
                         <th class="border-bottom-0">
                             <h6 class="fw-semibold mb-0">Aksi</h6>
                         </th>
+                        <?php
+                        }
+                        ?>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,7 +54,7 @@ if (!isset($_SESSION['user']['Level'])) {
                     while ($data = mysqli_fetch_array($query)) {
                     ?>
                     <tr>
-                        <td class="border-bottom-0"><h6 class="fw-semibold mb-0"><?php echo $i++; ?></h6></td>
+                        <td class="border-bottom-0 text-center"><h6 class="fw-semibold mb-0"><?php echo $i++; ?></h6></td>
                         <td class="border-bottom-0">
                             <h6 class="fw-semibold mb-1"><?php echo $data['NamaLengkap'];?></h6>                        
                         </td>
@@ -59,17 +65,21 @@ if (!isset($_SESSION['user']['Level'])) {
                             <h6 class="fw-semibold mb-1"><?php echo $data['Ulasan'];?></h6>                        
                         </td>
                         <td class="border-bottom-0">
-                            <h6 class="fw-semibold mb-1"><?php echo $data['Rating'];?>/5</h6>                        
+                            <h6 class="fw-semibold mb-1 text-center"><?php echo $data['Rating'];?>/5</h6>                        
                         </td>
                         <td class="border-bottom-0">
                         <?php
-                        if (!isset($_SESSION['user']['Level'])) {
+                        $user = null;
+                        if (isset($_SESSION['user']['UserID'])) {
+                            $user = $_SESSION['user']['UserID'];
+                        }
+                        if ($data['UserID'] == $user) {
                         ?>
                             <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#ModalUbah<?php echo $data['UlasanID']; ?>"><i class="ti ti-edit"></i></button>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#ModalHapus<?php echo $data['UlasanID']; ?>"><i class="ti ti-trash"></i></button>  
                         <?php
                         }
                         ?>
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#ModalHapus<?php echo $data['UlasanID']; ?>"><i class="ti ti-trash"></i></button>                        
                         </td>
                     </tr>
                     <?php

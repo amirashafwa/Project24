@@ -11,31 +11,23 @@ if (isset($_POST['profileubah'])) {
         $email = $_POST['email'];
         $alamat = $_POST['alamat'];
     }
-
-    $user_check = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM user WHERE Username='$username'"));
-    $petugas_check = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM petugas WHERE Username='$username'"));
-
-    if ($petugas_check > 0 || $user_check > 0) {
-        echo '<script>alert("Username sudah digunakan"); location.href="?page=profile"</script>';
+    if (isset($_SESSION['user']['Level'])) {
+        $query = mysqli_query($koneksi, "UPDATE petugas SET Nama='$nama', Username='$username' WHERE PetugasID = $petugasID");
     } else {
-        if (isset($_SESSION['user']['Level'])) {
-            $query = mysqli_query($koneksi, "UPDATE petugas SET Nama='$nama', Username='$username' WHERE PetugasID = $petugasID");
-        } else {
-            $query = mysqli_query($koneksi, "UPDATE user SET Username='$username', Email='$email', NamaLengkap='$nama', Alamat='$alamat' WHERE UserID = $userID");
-        }
+        $query = mysqli_query($koneksi, "UPDATE user SET Username='$username', Email='$email', NamaLengkap='$nama', Alamat='$alamat' WHERE UserID = $userID");
+    }
 
-        if ($_POST['password'] != "") {
-            if (isset($_SESSION['user']['Level'])) {
-                $query = mysqli_query($koneksi, "UPDATE petugas SET Password='$password' WHERE PetugasID = $petugasID");
-            } else {
-                $query = mysqli_query($koneksi, "UPDATE user SET Password='$password' WHERE UserID = $userID");
-            }
-        }
-        if ($query) {
-            echo "<script>alert('Ubah data berhasil!'); location.href='?page=profile';</script>";
+    if ($_POST['password'] != "") {
+        if (isset($_SESSION['user']['Level'])) {
+            $query = mysqli_query($koneksi, "UPDATE petugas SET Password='$password' WHERE PetugasID = $petugasID");
         } else {
-            echo "<script>alert('Ubah data gagal!'); location.href='?page=profile';</script>";
+            $query = mysqli_query($koneksi, "UPDATE user SET Password='$password' WHERE UserID = $userID");
         }
+    }
+    if ($query) {
+        echo "<script>alert('Ubah data berhasil!'); location.href='?page=profile';</script>";
+    } else {
+        echo "<script>alert('Ubah data gagal!'); location.href='?page=profile';</script>";
     }
 }
 ?>
@@ -94,21 +86,11 @@ if (isset($_POST['profileubah'])) {
                     <div class="row">
                         <div class="mb-3 col-md-6">
                         <label for="nama" class="form-label">Nama</label>
-                        <?php
-                        if (isset($_SESSION['user']['Level'])) {
-                        ?>
-                        <input class="form-control" type="text" id="nama" name="nama" value="<?php echo $_SESSION['user']['Nama']?>" autofocus/>
-                        <?php
-                        } else {
-                        ?>
-                        <input class="form-control" type="text" id="nama" name="nama" value="<?php echo $_SESSION['user']['NamaLengkap']?>" autofocus/>
-                        <?php
-                        }
-                        ?>
+                        <input autocomplete="off" class="form-control" type="text" id="nama" name="nama" value="<?php echo isset($_SESSION['user']['NamaLengkap']) ? $_SESSION['user']['NamaLengkap'] : $_SESSION['user']['Nama']; ?>" autofocus/>
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="username" class="form-label">Username</label>
-                            <input class="form-control" type="text" name="username" id="username" value="<?php echo $_SESSION['user']['Username']?>" />
+                            <input autocomplete="off" class="form-control" type="text" name="username" id="username" value="<?php echo $_SESSION['user']['Username']?>" />
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="password" class="form-label">Password</label>
@@ -119,11 +101,11 @@ if (isset($_POST['profileubah'])) {
                         ?>
                         <div class="mb-3 col-md-6">
                             <label class="form-label" for="email">Email</label>
-                            <input class="form-control" type="email" name="email" id="email" value="<?php echo $_SESSION['user']['Email']?>" />
+                            <input autocomplete="off" class="form-control" type="email" name="email" id="email" value="<?php echo $_SESSION['user']['Email']?>" />
                         </div>
                         <div class="mb-3 col-md-12">
                             <label class="form-label" for="alamat">Alamat</label>
-                            <textarea class="form-control" name="alamat" id="alamat" rows="5"><?php echo $_SESSION['user']['Alamat']?></textarea>
+                            <textarea autocomplete="off" class="form-control" name="alamat" id="alamat" rows="5"><?php echo $_SESSION['user']['Alamat']?></textarea>
                         </div>
                         <?php
                         }
